@@ -12,9 +12,8 @@ single assumptions file and served through an interactive Streamlit app.
 productivity/workflow SaaS targeting European SMEs (10–249 employees) in
 DACH + Benelux + Nordics?
 
-[![Live demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://YOUR-APP-URL.streamlit.app)
 
-**Live demo:** [YOUR-APP-URL.streamlit.app](https://YOUR-APP-URL.streamlit.app) (interactive model, adjust any assumption and watch TAM/SAM/SOM and the Monte Carlo recompute)
+**Live demo:** [(https://eu-sme-saas-market-sizing.streamlit.app) (interactive model, adjust any assumption and watch TAM/SAM/SOM and the Monte Carlo recompute)
 
 ## Why code instead of a spreadsheet
 
