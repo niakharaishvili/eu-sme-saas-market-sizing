@@ -1,5 +1,9 @@
 # EU-27 SME SaaS Market Sizing Model (TAM / SAM / SOM)
 
+[![Live demo](https://eu-sme-saas-market-sizing.streamlit.app)](https://eu-sme-saas-market-sizing.streamlit.app) 
+
+**Live demo:** [(https://eu-sme-saas-market-sizing.streamlit.app) (interactive model, adjust any assumption and watch TAM/SAM/SOM and the Monte Carlo recompute)
+
 A coded, auditable market-sizing model of the kind consulting teams usually build in
 Excel, with three things Excel can't do: a **live data pipeline** pulling inputs
 directly from the Eurostat API, a **10,000-draw Monte Carlo simulation** turning point
@@ -11,10 +15,6 @@ single assumptions file and served through an interactive Streamlit app.
 **Use case:** how large is the obtainable market for a hypothetical
 productivity/workflow SaaS targeting European SMEs (10–249 employees) in
 DACH + Benelux + Nordics?
-
-[![Live demo](https://eu-sme-saas-market-sizing.streamlit.app)](https://eu-sme-saas-market-sizing.streamlit.app) 
-
-**Live demo:** [(https://eu-sme-saas-market-sizing.streamlit.app) (interactive model, adjust any assumption and watch TAM/SAM/SOM and the Monte Carlo recompute)
 
 ## Why code instead of a spreadsheet
 
