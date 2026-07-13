@@ -1,0 +1,90 @@
+# =============================================================================
+# Model assumptions — EU-27 SME SaaS market sizing (TAM / SAM / SOM)
+# Every number is either sourced (see comment) or an explicit analyst
+# assumption. Change any value here and re-run: the model recomputes fully.
+# =============================================================================
+
+market:
+  reference_year: 2026
+  currency: EUR
+  # Top-down cross-check: European SaaS market ~USD 92.7bn in 2025
+  # (GMI / Statista Market Insights). Used only to validate the bottom-up TAM.
+  europe_saas_market_usd_bn: 92.7
+  usd_to_eur: 0.92
+  # Analyst assumption: share of European SaaS revenue coming from SMEs.
+  # SMEs are 99.8% of firms but a minority of IT spend (enterprise deals skew).
+  sme_share_of_saas_spend: 0.45
+
+# -----------------------------------------------------------------------------
+# Firm counts and adoption rates below are FALLBACK values. At runtime the
+# live data pipeline (src/eurostat_data.py) overwrites them with figures
+# pulled from the Eurostat API (or the committed cache in data/):
+#   firms    <- sbs_sc_ovw   (ENT_NR, B-S_X_O_S94, EU27, 2023)
+#   adoption <- isoc_cicce_use (E_CC paid cloud, EU27, 2025)
+# Micro adoption is NOT in any Eurostat survey (10+ employees only) and the
+# spend-per-firm figures are analyst assumptions triangulated from SMB spend
+# benchmarks (Cledara 2025 Software Spend Report; Vertice; Zylo) — e.g. a
+# 50-person SMB typically spends ~$40k-105k/yr on SaaS.
+# -----------------------------------------------------------------------------
+size_classes:
+  micro:                      # 0-9 employees
+    firms: 31190636           # fallback; pipeline value identical (Eurostat 2023)
+    adoption_rate: 0.30       # assumption (not covered by Eurostat survey)
+    annual_saas_spend_eur: 1500
+  small:                      # 10-49 employees
+    firms: 1571814            # fallback; pipeline: 10-19 + 20-49
+    adoption_rate: 0.493      # fallback; pipeline: Eurostat 2025
+    annual_saas_spend_eur: 15000
+  medium:                     # 50-249 employees
+    firms: 248817             # fallback
+    adoption_rate: 0.6678     # fallback
+    annual_saas_spend_eur: 75000
+
+# -----------------------------------------------------------------------------
+# SAM filters — hypothetical vendor: horizontal productivity/workflow SaaS
+# targeting small & medium firms (10-249 employees) in DACH + Benelux + Nordics.
+# -----------------------------------------------------------------------------
+sam:
+  exclude_size_classes: [micro]   # ICP starts at 10 employees
+  target_region_share: 0.28       # DACH+Benelux+Nordics share of EU SME base (Eurostat SBS, approx.)
+  category_wallet_share: 0.12     # productivity/collaboration share of SaaS wallet (assumption)
+
+# -----------------------------------------------------------------------------
+# SOM — obtainable market share of SAM, ramped over the planning horizon
+# with a logistic (S-curve) ramp per scenario.
+# -----------------------------------------------------------------------------
+som:
+  horizon_years: 5
+  scenarios:
+    conservative: { peak_share: 0.005, ramp_midpoint_year: 3.5, ramp_steepness: 1.2 }
+    base:         { peak_share: 0.015, ramp_midpoint_year: 3.0, ramp_steepness: 1.5 }
+    aggressive:   { peak_share: 0.030, ramp_midpoint_year: 2.5, ramp_steepness: 1.8 }
+
+# -----------------------------------------------------------------------------
+# One-way sensitivity (tornado) on year-5 base-case SOM.
+# Each driver is flexed +/- its own uncertainty range (all else constant).
+# Ranges reflect how well-sourced each input is: Eurostat-backed inputs get
+# narrow ranges; pure analyst assumptions get wide ones.
+# -----------------------------------------------------------------------------
+sensitivity:
+  drivers:
+    adoption_rate: 0.10          # Eurostat-sourced (micro segment adds some uncertainty)
+    target_region_share: 0.10    # Eurostat SBS-derived
+    peak_share: 0.25             # strategic assumption
+    annual_saas_spend_eur: 0.30  # benchmark triangulation, US/UK-skewed samples
+    category_wallet_share: 0.40  # pure analyst assumption — least evidence
+
+# -----------------------------------------------------------------------------
+# Monte Carlo: distribution per driver, matched to evidence quality.
+# Eurostat observations get tight truncated normals; spend is lognormal
+# (right-skewed, benchmark uncertainty); pure assumptions get wide triangles.
+# -----------------------------------------------------------------------------
+monte_carlo:
+  n_sims: 10000
+  seed: 42
+  distributions:
+    adoption_rate:         { dist: truncnorm,  rel_sd: 0.08 }
+    annual_saas_spend_eur: { dist: lognormal,  sigma: 0.30 }
+    target_region_share:   { dist: triangular, rel_low: 0.85, rel_high: 1.15 }
+    category_wallet_share: { dist: triangular, rel_low: 0.60, rel_high: 1.50 }
+    peak_share:            { dist: triangular, rel_low: 0.70, rel_high: 1.40 }

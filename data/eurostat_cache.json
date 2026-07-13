@@ -1,0 +1,13 @@
+{
+  "fetched_at": "2026-07-13T21:35:00+00:00",
+  "source": "Eurostat API (sbs_sc_ovw 2023, isoc_cicce_use 2025)",
+  "firm_counts": {
+    "micro": 31190636.0,
+    "small": 1571814.0,
+    "medium": 248817.0
+  },
+  "adoption_rates": {
+    "small": 0.493,
+    "medium": 0.6678
+  }
+}
